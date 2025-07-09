@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import path from "path";
+import path from "node:path";
 import { config } from "./config.js";
 import { db } from "./db/index.js";
 import { middlewareAuth } from "./api/middleware.js";
