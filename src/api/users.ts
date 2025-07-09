@@ -6,37 +6,40 @@ import { createUser, getUser } from "../db/queries/users.js";
 import type { User } from "../db/schema.js";
 
 export async function handlerUsersCreate(req: Request, res: Response) {
-	try {
-		const { name } = req.body;
-		const apiKey = generateRandomSHA256Hash();
-		const userId = uuidv4();
+  try {
+    const { name } = req.body;
+    const apiKey = generateRandomSHA256Hash();
+    const userId = uuidv4();
 
-		await createUser({
-			id: userId,
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString(),
-			name,
-			apiKey,
-		});
-		const user = await getUser(apiKey);
-		if (user) {
-			respondWithJSON(res, 201, user);
-		} else {
-			respondWithError(res, 500, "Couldn't retrieve user");
-		}
-	} catch (err) {
-		respondWithError(res, 500, "Couldn't create user", err);
-	}
+    await createUser({
+      id: userId,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      name,
+      apiKey,
+    });
+    const user = await getUser(apiKey);
+    if (user) {
+      respondWithJSON(res, 201, user);
+    } else {
+      respondWithError(res, 500, "Couldn't retrieve user");
+    }
+  } catch (err) {
+    respondWithError(res, 500, "Couldn't create user", err);
+  }
 }
 
-export async function handlerUsersGet(_req: Request, res: Response, user: User) {
-	respondWithJSON(res, 200, user);
+export async function handlerUsersGet(
+  _req: Request,
+  res: Response,
+  user: User,
+) {
+  respondWithJSON(res, 200, user);
 }
 
 function generateRandomSHA256Hash(): string {
-	// should we be using crypto.randomBytes instead of crypto.pseudoRandomBytes?
-	return crypto
-		.createHash("sha256")
-		.update(crypto.pseudoRandomBytes(32))
-		.digest("hex");
+  return crypto
+    .createHash("sha256")
+    .update(crypto.randomBytes(32))
+    .digest("hex");
 }
